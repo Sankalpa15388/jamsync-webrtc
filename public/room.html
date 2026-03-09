@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="JamSync - Live Jam Room. Real-time video conferencing powered by WebRTC.">
+  <title>JamSync | Live Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="room-page">
+  <!-- Animated background -->
+  <div class="bg-animation">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="room-container">
+    <!-- Top Bar -->
+    <div class="room-topbar">
+      <div class="topbar-left">
+        <a href="/" class="topbar-logo">
+          <div class="topbar-logo-icon"><i class="fas fa-music"></i></div>
+          <span>Jam<span
+              style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Sync</span></span>
+        </a>
+      </div>
+      <div class="topbar-center">
+        <div class="room-id-badge" id="room-id-badge" title="Click to copy Room ID">
+          <i class="fas fa-link"></i>
+          <span>Room:</span>
+          <span class="room-id-value" id="room-id-display"></span>
+          <i class="fas fa-copy"></i>
+        </div>
+        <div class="participant-count">
+          <div class="participant-dot"></div>
+          <span id="participant-count-text">1 participant</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="connection-quality" id="connection-quality">
+          <div class="connection-bar" style="height: 6px;"></div>
+          <div class="connection-bar" style="height: 10px;"></div>
+          <div class="connection-bar" style="height: 14px;"></div>
+          <span>Connected</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="room-main">
+      <!-- Video Grid Area -->
+      <div class="video-area">
+        <div class="video-grid" id="video-grid" data-count="1">
+          <!-- Local video tile -->
+          <div class="video-tile local" id="local-tile">
+            <video id="local-video" autoplay muted playsinline></video>
+            <div class="video-tile-overlay">
+              <div class="video-tile-name">
+                <span id="local-name">You</span>
+                <span class="you-badge">YOU</span>
+              </div>
+              <div class="video-tile-indicators" id="local-indicators"></div>
+            </div>
+            <!-- Placeholder when camera is off -->
+            <div class="video-tile-placeholder" id="local-placeholder" style="display: none;">
+              <div class="placeholder-avatar" id="local-avatar">Y</div>
+              <div class="placeholder-name">Camera Off</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="chat-panel hidden" id="chat-panel">
+        <div class="chat-header">
+          <h3><i class="fas fa-comments"></i> Chat</h3>
+          <button class="chat-close-btn" id="chat-close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg system">
+            <div class="chat-msg-text">Welcome to the jam room! 🎵</div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." autocomplete="off">
+          <button class="chat-send-btn" id="chat-send-btn">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Toolbar -->
+    <div class="room-toolbar">
+      <button class="toolbar-btn" id="mic-btn" title="Toggle Microphone">
+        <i class="fas fa-microphone"></i>
+      </button>
+      <button class="toolbar-btn" id="camera-btn" title="Toggle Camera">
+        <i class="fas fa-video"></i>
+      </button>
+      <button class="toolbar-btn" id="screen-btn" title="Share Screen">
+        <i class="fas fa-desktop"></i>
+      </button>
+
+      <div class="toolbar-separator"></div>
+
+      <button class="toolbar-btn" id="chat-btn" title="Toggle Chat">
+        <i class="fas fa-comments"></i>
+      </button>
+
+      <div class="toolbar-separator"></div>
+
+      <button class="toolbar-btn leave-btn" id="leave-btn" title="Leave Room">
+        <i class="fas fa-phone-slash"></i>
+      </button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/room.js"></script>
+</body>
+
+</html>

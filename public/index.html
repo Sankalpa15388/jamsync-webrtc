@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JamSync - Real-Time Remote Music Jam Platform. Connect with musicians worldwide for seamless online collaboration.">
+    <title>JamSync | Remote Music Jam Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="lobby-page">
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+
+    <div class="lobby-container">
+        <!-- Header / Brand -->
+        <header class="lobby-header">
+            <div class="logo-group">
+                <div class="logo-icon">
+                    <i class="fas fa-music"></i>
+                    <div class="logo-pulse"></div>
+                </div>
+                <h1 class="logo-text">
+                    <span class="logo-jam">Jam</span><span class="logo-sync">Sync</span>
+                </h1>
+            </div>
+            <p class="tagline">Real-Time Remote Music Jam Platform</p>
+            <p class="subtitle">Connect with musicians worldwide. Jam together in real-time with crystal-clear audio and video.</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="lobby-card">
+            <div class="card-glow"></div>
+
+            <!-- Username Input -->
+            <div class="input-section">
+                <label class="input-label" for="username-input">
+                    <i class="fas fa-user"></i>
+                    Your Name
+                </label>
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="username-input" 
+                        class="input-field" 
+                        placeholder="Enter your display name"
+                        maxlength="20"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+            <div class="divider">
+                <span class="divider-text">Choose an option</span>
+            </div>
+
+            <!-- Create Room -->
+            <div class="action-section">
+                <button id="create-room-btn" class="btn btn-primary">
+                    <div class="btn-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="btn-content">
+                        <span class="btn-title">Create a Jam Room</span>
+                        <span class="btn-subtitle">Start a new session & invite friends</span>
+                    </div>
+                    <i class="fas fa-arrow-right btn-arrow"></i>
+                </button>
+            </div>
+
+            <div class="divider">
+                <span class="divider-text">or</span>
+            </div>
+
+            <!-- Join Room -->
+            <div class="action-section">
+                <label class="input-label" for="room-id-input">
+                    <i class="fas fa-link"></i>
+                    Room Code
+                </label>
+                <div class="join-row">
+                    <div class="input-wrapper flex-grow">
+                        <input 
+                            type="text" 
+                            id="room-id-input" 
+                            class="input-field" 
+                            placeholder="Paste room code here"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button id="join-room-btn" class="btn btn-secondary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Join</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-row">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-video"></i></div>
+                <h3>HD Video</h3>
+                <p>Crystal-clear peer-to-peer video streaming</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-microphone"></i></div>
+                <h3>Low Latency Audio</h3>
+                <p>Real-time audio with minimal delay</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                <h3>Live Chat</h3>
+                <p>Text chat alongside your jam session</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-desktop"></i></div>
+                <h3>Screen Share</h3>
+                <p>Share sheet music or tutorials</p>
+            </div>
+        </div>
+
+        <footer class="lobby-footer">
+            <p>Built with <i class="fas fa-heart" style="color: var(--accent-pink);"></i> using WebRTC Technology</p>
+        </footer>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const usernameInput = document.getElementById('username-input');
+        const roomIdInput = document.getElementById('room-id-input');
+        const createBtn = document.getElementById('create-room-btn');
+        const joinBtn = document.getElementById('join-room-btn');
+
+        // Load saved username
+        const savedName = localStorage.getItem('jamsync-username');
+        if (savedName) usernameInput.value = savedName;
+
+        function getUsername() {
+            const name = usernameInput.value.trim();
+            if (!name) {
+                usernameInput.classList.add('input-error');
+                usernameInput.focus();
+                setTimeout(() => usernameInput.classList.remove('input-error'), 1500);
+                return null;
+            }
+            localStorage.setItem('jamsync-username', name);
+            return name;
+        }
+
+        createBtn.addEventListener('click', async () => {
+            const username = getUsername();
+            if (!username) return;
+
+            createBtn.classList.add('btn-loading');
+            try {
+                const res = await fetch('/api/create-room');
+                const { roomId } = await res.json();
+                window.location.href = `/room/${roomId}?username=${encodeURIComponent(username)}`;
+            } catch (err) {
+                alert('Failed to create room. Please try again.');
+                createBtn.classList.remove('btn-loading');
+            }
+        });
+
+        joinBtn.addEventListener('click', () => {
+            const username = getUsername();
+            if (!username) return;
+
+            const roomId = roomIdInput.value.trim();
+            if (!roomId) {
+                roomIdInput.classList.add('input-error');
+                roomIdInput.focus();
+                setTimeout(() => roomIdInput.classList.remove('input-error'), 1500);
+                return;
+            }
+            window.location.href = `/room/${roomId}?username=${encodeURIComponent(username)}`;
+        });
+
+        // Enter key support
+        roomIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinBtn.click();
+        });
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (roomIdInput.value.trim()) joinBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
