@@ -66,7 +66,7 @@
   document.title = `JamSync | Room ${roomId}`;
 
   // --- Socket.IO Connection ---
-  const socket = io("http://10.251.162.55:3000");
+  const socket = io("http://10.102.11.85:3000");
   // --- Get Local Media ---
   async function initLocalStream() {
     try {
